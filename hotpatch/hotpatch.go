@@ -3,6 +3,7 @@ package hotpatch
 import (
 	"fmt"
 	"reflect"
+	"runtime"
 	"syscall"
 	"unsafe"
 )
@@ -86,7 +87,13 @@ func modifyBinary(target uintptr, bytes []byte) {
 	function := entryAddress(target, len(bytes))
 
 	page := entryAddress(pageStart(target), syscall.Getpagesize())
-	err := syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)
+	var err error
+	if runtime.GOOS == "darwin" {
+		err = syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)
+
+	} else {
+		err = syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_WRITE)
+	}
 	if err != nil {
 		panic(err)
 	}
