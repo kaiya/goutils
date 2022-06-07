@@ -88,18 +88,24 @@ func modifyBinary(target uintptr, bytes []byte) {
 
 	page := entryAddress(pageStart(target), syscall.Getpagesize())
 	var err error
+	var port int
 	if runtime.GOOS == "darwin" {
-		err = syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)
-
+		port = syscall.PROT_READ | syscall.PROT_WRITE
 	} else {
-		err = syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_WRITE)
+		port = syscall.PROT_READ | syscall.PROT_WRITE | syscall.PROT_EXEC
 	}
+	err = syscall.Mprotect(page, port)
 	if err != nil {
 		panic(err)
 	}
 	copy(function, bytes)
 
-	err = syscall.Mprotect(page, syscall.PROT_READ|syscall.PROT_EXEC)
+	if runtime.GOOS == "darwin" {
+		port = syscall.PROT_READ
+	} else {
+		port = syscall.PROT_READ | syscall.PROT_EXEC
+	}
+	err = syscall.Mprotect(page, port)
 	if err != nil {
 		panic(err)
 	}
