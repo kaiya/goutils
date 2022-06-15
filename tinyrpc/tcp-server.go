@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"compress/zlib"
 	"fmt"
 	"net"
 	"os"
@@ -63,7 +65,13 @@ func handleRequest(conn net.Conn) {
 	//conn.Write([]byte("Message received."))
 	// Close the connection when you're done with it.
 
-	msg, err := rpc.DecodePacket(conn)
+	zip, err := zlib.NewReader(conn)
+	if err != nil {
+		fmt.Println("new zlib reader error: ", err)
+		return
+	}
+	bufconn := bufio.NewReader(zip)
+	msg, err := rpc.DecodePacket(bufconn)
 	if err != nil {
 		fmt.Printf("decode packet error:%s\n", err)
 		return
