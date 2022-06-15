@@ -1,12 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"net"
 	"os"
 
-	"github.com/kaiya/tinyrpc/rpc"
+	"github.com/kaiya/goutils/tinyrpc/rpc"
 )
 
 const (
@@ -64,8 +63,7 @@ func handleRequest(conn net.Conn) {
 	//conn.Write([]byte("Message received."))
 	// Close the connection when you're done with it.
 
-	bufconn := bufio.NewReaderSize(conn, 20)
-	msg, err := rpc.DecodePacket(bufconn)
+	msg, err := rpc.DecodePacket(conn)
 	if err != nil {
 		fmt.Printf("decode packet error:%s\n", err)
 		return
