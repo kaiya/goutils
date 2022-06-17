@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"compress/zlib"
 	"fmt"
 	"net"
 	"os"
@@ -41,36 +40,7 @@ func main() {
 // Handles incoming requests.
 func handleRequest(conn net.Conn) {
 	defer conn.Close()
-	// Make a buffer to hold incoming data.
-	/*
-		totalsizebuf := make([]byte, 4)
-		_, err := io.ReadFull(conn, totalsizebuf)
-		if err != nil {
-			fmt.Println("Error reading totalsize:", err.Error())
-			return
-		}
-		totalsize := binary.BigEndian.Uint32(totalsizebuf)
-		fmt.Println("totalsize: ", totalsize)
-
-		magicbuf := make([]byte, 4)
-		_, err = io.ReadFull(conn, magicbuf)
-		if err != nil {
-			fmt.Println("Error reading magic:", err.Error())
-			return
-		}
-		fmt.Println("magic: ", string(magicbuf))
-	*/
-
-	// Send a response back to person contacting us.
-	//conn.Write([]byte("Message received."))
-	// Close the connection when you're done with it.
-
-	zip, err := zlib.NewReader(conn)
-	if err != nil {
-		fmt.Println("new zlib reader error: ", err)
-		return
-	}
-	bufconn := bufio.NewReader(zip)
+	bufconn := bufio.NewReader(conn)
 	msg, err := rpc.DecodePacket(bufconn)
 	if err != nil {
 		fmt.Printf("decode packet error:%s\n", err)
