@@ -5,7 +5,7 @@ import (
 	"net/rpc"
 	"strconv"
 
-	"github.com/Kaiya/goutils/tinyrpc/core"
+	"github.com/kaiya/goutils/tinyrpc/core"
 )
 
 func main() {

@@ -7,6 +7,7 @@ import (
 	"net"
 	"sync"
 	"testing"
+	"unsafe"
 )
 
 func Test_Encode(t *testing.T) {
@@ -45,4 +46,15 @@ func Test_Encode(t *testing.T) {
 	zip.Flush()
 	client.Close()
 	wg.Wait()
+}
+
+func TestByte(t *testing.T) {
+	// abc
+	a := []byte{97, 98, 99}
+	// 65 66 67
+	b := "ABCD"
+	b = *(*string)(unsafe.Pointer(&a))
+	// b: 65 98 99 -> Abc
+	a[0] = 65
+	t.Logf("byte of b: %v, str of b:%s", []byte(b), b)
 }
