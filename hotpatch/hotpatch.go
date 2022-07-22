@@ -18,6 +18,7 @@ func create() *Patches {
 	return &Patches{originals: make(map[uintptr][]byte), values: make(map[reflect.Value]reflect.Value), valueHolders: make(map[reflect.Value]reflect.Value)}
 }
 
+// Create New Patches
 func NewPatches() *Patches {
 	return create()
 }
@@ -32,6 +33,7 @@ func (p *Patches) ApplyFunc(target, double interface{}) *Patches {
 	return p.ApplyCore(t, d)
 }
 
+// Apply Core function
 func (p *Patches) ApplyCore(target, double reflect.Value) *Patches {
 	check(target, double)
 	assTarget := *(*uintptr)(getPointer(target))
@@ -43,9 +45,9 @@ func (p *Patches) ApplyCore(target, double reflect.Value) *Patches {
 	original := replace(assTarget, uintptr(getPointer(double)))
 	p.originals[assTarget] = original
 	return p
-
 }
 
+// Reset Patches
 func (p *Patches) Reset() {
 	for target, bytes := range p.originals {
 		modifyBinary(target, bytes)
