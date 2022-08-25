@@ -18,3 +18,11 @@ func Slice2Records(cells []string, batchSize int) [][]string {
 	}
 	return ret
 }
+
+func SingleColumn2Table(records [][]string, idx int) []string {
+	ret := make([]string, 0, len(records))
+	for _, record := range records {
+		ret = append(ret, record[idx])
+	}
+	return ret
+}

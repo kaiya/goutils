@@ -2,12 +2,27 @@ package file
 
 import (
 	"bufio"
+	"encoding/csv"
 	"io"
 	"os"
 
 	"github.com/goccy/go-json"
 	"github.com/pkg/errors"
 )
+
+func ReadCsvRecordsFromFile(filename string) ([][]string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, errors.Wrap(err, "open file")
+	}
+	csvReader := csv.NewReader(file)
+	csvReader.FieldsPerRecord = -1
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		return nil, errors.Wrap(err, "read csv")
+	}
+	return records, nil
+}
 
 func ParseJsonFile(path string, out interface{}) error {
 	file, err := os.Open(path)
