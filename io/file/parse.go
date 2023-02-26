@@ -24,6 +24,19 @@ func ReadCsvRecordsFromFile(filename string) ([][]string, error) {
 	return records, nil
 }
 
+func WriteRecordsToFile(filename string, records [][]string, header ...string) error {
+	f, err := os.Create(filename)
+	if err != nil {
+		return errors.Wrap(err, "create file")
+	}
+	writer := csv.NewWriter(f)
+	if len(header) > 0 {
+		writer.Write(header)
+		writer.Flush()
+	}
+	return writer.WriteAll(records)
+}
+
 func ParseJsonFile(path string, out interface{}) error {
 	file, err := os.Open(path)
 	if err != nil {
